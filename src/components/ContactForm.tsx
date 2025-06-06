@@ -70,7 +70,8 @@ const ContactForm = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to send message');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Failed to send message');
       }
 
       const data = await response.json();

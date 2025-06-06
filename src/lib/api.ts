@@ -1,8 +1,8 @@
 // API configuration
 const getApiBaseUrl = () => {
   if (import.meta.env.MODE === 'production') {
-    // Use the specific Vercel URL in production
-    return 'https://pixel-perfect-b9oynatq7-sriharshas-projects-2167b74d.vercel.app/api';
+    // Use the current hostname in production
+    return `${window.location.origin}/api`;
   }
   // Use localhost in development
   return 'http://localhost:3001/api';
@@ -20,6 +20,15 @@ export const ENDPOINTS = {
 export const commonFetchOptions = {
   headers: {
     'Content-Type': 'application/json',
+  }
+};
+
+// Options for authenticated endpoints
+export const authenticatedFetchOptions = {
+  ...commonFetchOptions,
+  headers: {
+    ...commonFetchOptions.headers,
+    'x-api-key': import.meta.env.VITE_API_KEY || '',
   },
   credentials: 'include' as const,
 }; 

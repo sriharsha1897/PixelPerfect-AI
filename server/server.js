@@ -37,15 +37,38 @@ app.options('*', cors());
 
 app.use(express.json());
 
-// Development middleware to automatically add API key
-if (process.env.NODE_ENV === 'development') {
-  app.use((req, res, next) => {
-    req.headers['x-api-key'] = process.env.API_SECRET_KEY;
-    next();
-  });
-}
+// Global middleware to handle API key
+app.use((req, res, next) => {
+  // Skip API key check for OPTIONS requests and non-API routes
+  if (req.method === 'OPTIONS' || !req.path.startsWith('/api/')) {
+    return next();
+  }
 
-// Routes - Note the change in route paths for Vercel
+  // Skip API key check for contact form submissions
+  if (req.path === '/api/contact' && req.method === 'POST') {
+    return next();
+  }
+
+  const apiKey = req.header('x-api-key');
+  
+  if (!apiKey) {
+    return res.status(401).json({
+      success: false,
+      message: 'API key is required'
+    });
+  }
+
+  if (apiKey !== process.env.API_SECRET_KEY) {
+    return res.status(401).json({
+      success: false,
+      message: 'Invalid API key'
+    });
+  }
+
+  next();
+});
+
+// Routes
 app.use('/api/contact', contactRouter);
 app.use('/api/messages', messagesRouter);
 
