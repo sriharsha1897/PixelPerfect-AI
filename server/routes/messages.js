@@ -1,25 +1,24 @@
 const express = require('express');
 const router = express.Router();
-const { validateApiKey } = require('../middleware/auth');
+const storage = require('../config/storage');
 
-// Choose your storage implementation
-const storage = process.env.USE_FIREBASE === 'true' 
-  ? require('../config/firebase')
-  : require('../config/storage');
-
-router.get('/', validateApiKey, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
+    console.log('Fetching all messages');
     const messages = await storage.getAllMessages();
     
-    res.json({
+    console.log(`Retrieved ${messages.length} messages`);
+    
+    return res.status(200).json({
       success: true,
       data: messages
     });
   } catch (error) {
-    console.error('Error in messages route:', error);
-    res.status(500).json({
+    console.error('Error fetching messages:', error);
+    return res.status(500).json({
       success: false,
-      message: 'Failed to retrieve messages'
+      message: 'Failed to fetch messages',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
     });
   }
 });

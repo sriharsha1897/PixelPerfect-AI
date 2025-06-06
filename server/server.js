@@ -43,8 +43,9 @@ app.use((req, res, next) => {
     return next();
   }
 
-  // Skip API key check for contact form submissions
-  if (req.path === '/api/contact' && req.method === 'POST') {
+  // Skip API key check for contact form submissions and message retrieval
+  if ((req.path === '/api/contact' && req.method === 'POST') ||
+      (req.path === '/api/messages' && req.method === 'GET')) {
     return next();
   }
 
