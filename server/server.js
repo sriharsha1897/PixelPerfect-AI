@@ -7,7 +7,6 @@ const { contactRouter } = require('./routes/contact');
 const { messagesRouter } = require('./routes/messages');
 
 const app = express();
-const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(helmet()); // Security headers
@@ -52,6 +51,15 @@ if (process.env.NODE_ENV === 'development') {
   });
 }
 
+// Routes - Note the change in route paths for Vercel
+app.use('/api/contact', contactRouter);
+app.use('/api/messages', messagesRouter);
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok' });
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -59,15 +67,6 @@ app.use((err, req, res, next) => {
     success: false,
     message: err.message || 'Internal Server Error'
   });
-});
-
-// Routes
-app.use('/api/contact', contactRouter);
-app.use('/api/messages', messagesRouter);
-
-// Health check endpoint
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok' });
 });
 
 // 404 handler
@@ -79,10 +78,4 @@ app.use((req, res) => {
 });
 
 // Export for Vercel
-if (process.env.NODE_ENV === 'production') {
-  module.exports = app;
-} else {
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-  });
-}
+module.exports = app;
