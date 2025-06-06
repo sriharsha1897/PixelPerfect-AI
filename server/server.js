@@ -13,9 +13,11 @@ const PORT = process.env.PORT || 3001;
 app.use(helmet()); // Security headers
 app.use(morgan('combined')); // Request logging
 
-// Updated CORS configuration
+// Updated CORS configuration for Vercel
 app.use(cors({
-  origin: ['http://localhost:8080', 'http://localhost:8081', 'http://localhost:8082'],
+  origin: process.env.NODE_ENV === 'production' 
+    ? [process.env.VERCEL_URL, 'https://pixel-perfect-ai.vercel.app'] 
+    : ['http://localhost:8080', 'http://localhost:8081', 'http://localhost:8082'],
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type', 'x-api-key'],
   credentials: true
@@ -57,6 +59,13 @@ app.use((req, res) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+// Export for Vercel
+if (process.env.NODE_ENV === 'production') {
+  // Export for Vercel serverless function
+  module.exports = app;
+} else {
+  // Start server normally in development
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+}
