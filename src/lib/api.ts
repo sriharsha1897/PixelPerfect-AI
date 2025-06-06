@@ -2,7 +2,7 @@
 const getApiBaseUrl = () => {
   if (import.meta.env.MODE === 'production') {
     // Use the specific Vercel URL in production
-    return 'https://pixel-perfect-ai-one.vercel.app/api';
+    return 'https://pixel-perfect-b9oynatq7-sriharshas-projects-2167b74d.vercel.app/api';
   }
   // Use localhost in development
   return 'http://localhost:3001/api';

@@ -16,6 +16,7 @@ app.use(morgan('combined')); // Request logging
 app.use(cors({
   origin: function(origin, callback) {
     const allowedOrigins = [
+      'https://pixel-perfect-b9oynatq7-sriharshas-projects-2167b74d.vercel.app',
       'https://pixel-perfect-ai-one.vercel.app',
       'http://localhost:8080',
       'http://localhost:8081',
@@ -27,7 +28,8 @@ app.use(cors({
     if (!origin) return callback(null, true);
     
     if (allowedOrigins.indexOf(origin) === -1) {
-      return callback(new Error('The CORS policy for this site does not allow access from the specified Origin.'), false);
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
     }
     return callback(null, true);
   },
