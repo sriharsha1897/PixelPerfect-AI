@@ -1,8 +1,7 @@
 // API configuration
 const getApiBaseUrl = () => {
   if (import.meta.env.MODE === 'production') {
-    // Use the current hostname in production
-    return `${window.location.origin}/api`;
+    return 'https://pixel-perfect-ai-one.vercel.app/api';
   }
   // Use localhost in development
   return 'http://localhost:3001/api';

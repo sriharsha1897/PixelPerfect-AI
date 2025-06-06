@@ -14,26 +14,13 @@ app.use(morgan('combined')); // Request logging
 
 // Updated CORS configuration
 app.use(cors({
-  origin: function(origin, callback) {
-    // Allow all vercel.app subdomains and localhost
-    if (!origin || 
-        origin.match(/^https:\/\/.*\.vercel\.app$/) ||
-        origin.match(/^http:\/\/localhost:[0-9]+$/)) {
-      return callback(null, true);
-    }
-    
-    const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-    return callback(new Error(msg), false);
-  },
+  origin: ['https://pixel-perfect-ai-one.vercel.app', 'http://localhost:8080'],
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'x-api-key', 'Authorization'],
   credentials: true,
   preflightContinue: false,
   optionsSuccessStatus: 204
 }));
-
-// Add OPTIONS handling for preflight requests
-app.options('*', cors());
 
 app.use(express.json());
 
@@ -79,10 +66,11 @@ app.get('/health', (req, res) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error('Error:', err);
   res.status(err.status || 500).json({
     success: false,
-    message: err.message || 'Internal Server Error'
+    message: err.message || 'Internal Server Error',
+    error: process.env.NODE_ENV === 'development' ? err : {}
   });
 });
 
