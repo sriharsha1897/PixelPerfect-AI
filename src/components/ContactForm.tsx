@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import IntersectionObserver from "./IntersectionObserver";
+import { ENDPOINTS, commonFetchOptions } from '@/lib/api';
 
 interface FormData {
   name: string;
@@ -62,11 +63,9 @@ const ContactForm = () => {
     setIsSubmitting(true);
     
     try {
-      const response = await fetch('http://localhost:3001/api/contact', {
+      const response = await fetch(ENDPOINTS.CONTACT, {
+        ...commonFetchOptions,
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify(formData)
       });
 

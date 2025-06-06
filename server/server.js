@@ -13,15 +13,34 @@ const PORT = process.env.PORT || 3001;
 app.use(helmet()); // Security headers
 app.use(morgan('combined')); // Request logging
 
-// Updated CORS configuration for Vercel
+// Updated CORS configuration
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? [process.env.VERCEL_URL, 'https://pixel-perfect-ai.vercel.app'] 
-    : ['http://localhost:8080', 'http://localhost:8081', 'http://localhost:8082'],
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type', 'x-api-key'],
-  credentials: true
+  origin: function(origin, callback) {
+    const allowedOrigins = [
+      'https://pixel-perfect-ai-one.vercel.app',
+      'http://localhost:8080',
+      'http://localhost:8081',
+      'http://localhost:8082',
+      'http://localhost:3000'
+    ];
+    
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) === -1) {
+      return callback(new Error('The CORS policy for this site does not allow access from the specified Origin.'), false);
+    }
+    return callback(null, true);
+  },
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'x-api-key', 'Authorization'],
+  credentials: true,
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 }));
+
+// Add OPTIONS handling for preflight requests
+app.options('*', cors());
 
 app.use(express.json());
 
@@ -61,10 +80,8 @@ app.use((req, res) => {
 
 // Export for Vercel
 if (process.env.NODE_ENV === 'production') {
-  // Export for Vercel serverless function
   module.exports = app;
 } else {
-  // Start server normally in development
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
   });
