@@ -44,6 +44,7 @@ const saveMessages = async (messages) => {
   }
 };
 
+// In-memory storage for messages
 let messages = [];
 
 // Load initial messages
@@ -53,34 +54,46 @@ let messages = [];
 
 const addMessage = async (messageData) => {
   try {
+    console.log('Adding message:', messageData);
+
+    // Validate message data
+    if (!messageData || typeof messageData !== 'object') {
+      throw new Error('Invalid message data');
+    }
+
+    const { name, email, message } = messageData;
+    if (!name || !email || !message) {
+      throw new Error('Missing required fields');
+    }
+
     const newMessage = {
       id: Date.now().toString(),
-      ...messageData,
+      name: String(name).trim(),
+      email: String(email).trim(),
+      message: String(message).trim(),
       timestamp: new Date().toISOString()
     };
     
-    // Reload messages to get latest
-    messages = await loadMessages();
-    
     messages.push(newMessage);
-    await saveMessages(messages);
+    console.log('Message added successfully:', newMessage);
     return newMessage;
   } catch (error) {
-    console.error('Error adding message to storage:', error);
-    throw new Error('Failed to save message to storage');
+    console.error('Error adding message:', {
+      error,
+      messageData
+    });
+    throw new Error(`Failed to save message: ${error.message}`);
   }
 };
 
 const getAllMessages = async () => {
   try {
-    // Reload messages from file to get latest
-    messages = await loadMessages();
     return [...messages].sort((a, b) => 
       new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
     );
   } catch (error) {
-    console.error('Error getting messages from storage:', error);
-    throw new Error('Failed to retrieve messages from storage');
+    console.error('Error getting messages:', error);
+    throw new Error('Failed to retrieve messages');
   }
 };
 

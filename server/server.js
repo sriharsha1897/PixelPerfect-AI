@@ -9,19 +9,31 @@ const { messagesRouter } = require('./routes/messages');
 const app = express();
 
 // Middleware
-app.use(helmet()); // Security headers
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" }
+})); // Security headers
 app.use(morgan('combined')); // Request logging
+
+// Request logging middleware
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+  console.log('Request Headers:', req.headers);
+  console.log('Request Body:', req.body);
+  next();
+});
 
 // Updated CORS configuration
 app.use(cors({
-  origin: ['https://pixel-perfect-ai-one.vercel.app', 'http://localhost:8080'],
+  origin: true, // Allow all origins
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'x-api-key', 'Authorization'],
-  credentials: true,
-  preflightContinue: false,
-  optionsSuccessStatus: 204
+  credentials: true
 }));
 
+// Handle preflight requests
+app.options('*', cors());
+
+// Body parsing middleware
 app.use(express.json());
 
 // Global middleware to handle API key
@@ -66,7 +78,15 @@ app.get('/health', (req, res) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error('Error:', err);
+  console.error('Error:', {
+    message: err.message,
+    stack: err.stack,
+    url: req.url,
+    method: req.method,
+    body: req.body,
+    headers: req.headers
+  });
+
   res.status(err.status || 500).json({
     success: false,
     message: err.message || 'Internal Server Error',
@@ -76,6 +96,7 @@ app.use((err, req, res, next) => {
 
 // 404 handler
 app.use((req, res) => {
+  console.log('404 Not Found:', req.url);
   res.status(404).json({
     success: false,
     message: 'Route not found'
