@@ -1,73 +1,108 @@
-# Welcome to your Lovable project
+# Pixelperfect AI Application
 
-## Project info
+## Overview
+A modern web application built with React and Express that provides a sleek contact form interface with message management capabilities. The application allows users to submit contact messages through a beautiful UI and administrators to view submitted messages securely. Messages are stored in memory using a simple array data structure.
 
-**URL**: https://lovable.dev/projects/30df4fe7-3800-4652-aadf-894217b6e754
+## Design Rationale
 
-## How can I edit this code?
+### UX Choices
+- **Clean Form Interface**: Minimalist design that makes form submission intuitive and straightforward
+- **Responsive Layout**: Mobile-first design approach ensuring great user experience across all devices
+- **Real-time Validation**: Immediate feedback on form inputs to help users submit correct information
+- **Admin Dashboard**: Secure interface for viewing and managing submitted messages
 
-There are several ways of editing your application.
+### UI Components
+- Built with shadcn-ui for consistent, modern UI components
+- Tailwind CSS for responsive and maintainable styling
+- Toast notifications for user feedback
+- Loading states and error handling for better UX
 
-**Use Lovable**
+### AI Development Tools
+- **Cursor AI**: Used as the primary IDE for intelligent code completion and real-time suggestions
+- **Claude AI**: Leveraged for code review, optimization, and architectural decisions
+- **Lovable AI**: Utilized for initial project setup and component structure planning
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/30df4fe7-3800-4652-aadf-894217b6e754) and start prompting.
+## Setup & Run
 
-Changes made via Lovable will be committed automatically to this repo.
+### Prerequisites
+- Node.js 14.x or higher
+- npm or yarn
 
-**Use your preferred IDE**
+### Installation
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+```bash
+# Clone the repository
+git clone git@github.com:sriharsha1897/PixelPerfect-AI.git
+cd pixel-perfect-ai
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+# Install frontend dependencies
+npm install
 
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+# Install backend dependencies
+cd server
+npm install
 ```
 
-**Edit a file directly in GitHub**
+### Configuration
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+1. Frontend Environment (.env):
+```env
+VITE_API_URL=http://localhost:3001
+```
 
-**Use GitHub Codespaces**
+2. Backend Environment (server/.env):
+```env
+PORT=3001
+API_SECRET_KEY=your_secret_key
+NODE_ENV=development
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Running Locally
 
-## What technologies are used for this project?
+```bash
+# Start frontend (from root directory)
+npm run dev
+# Frontend runs on http://localhost:8081
 
-This project is built with:
+# Start backend (from server directory)
+npm run dev
+# Backend runs on http://localhost:3001
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Features
+- 📝 User-friendly contact form
+- ✉️ Secure message submission
+- 🔐 Protected admin message viewing
+- ✨ Modern, responsive UI
+- 🛡️ Input validation and sanitization
+- 📱 Mobile-friendly design
+- 💾 Simple in-memory message storage
 
-## How can I deploy this project?
+## API Endpoints
 
-Simply open [Lovable](https://lovable.dev/projects/30df4fe7-3800-4652-aadf-894217b6e754) and click on Share -> Publish.
+### POST /api/contact
+Submit a contact form message
+```json
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "message": "Hello, this is my message."
+}
+```
 
-## Can I connect a custom domain to my Lovable project?
+### GET /api/messages
+View all messages (requires API key)
+```
+Header: x-api-key: your_secret_key
+```
 
-Yes, you can!
+## Storage Implementation
+The application uses a simple in-memory array to store messages. Please note that messages will be lost when the server restarts. This implementation is suitable for development and testing purposes.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## Tech Stack
+- Frontend: Vite + React + TypeScript + shadcn-ui
+- Backend: Express.js + Node.js
+- Storage: In-memory Array
+- Styling: Tailwind CSS
+- Validation: Express Validator
+- Security: Helmet, CORS
